@@ -25,15 +25,36 @@ end
 
 # class for a Knight in chess
 class Knight
-  def initialize(_start_point = [0, 1])
+  def initialize()
     initialize_board
+    @counter = 0
   end
 
   def test
     @board[33].print_neighbors
   end
 
+  def knight_moves(start_point,end_point)
+    start_node = find_node(start_point)
+    end_node = find_node(end_point)
+    queue = Queue.new
+    steps = knight_moves_recursive([start_node,[]],end_node,queue)
+    puts @counter
+    puts "You made it in #{steps.length - 1} moves! Here's your path:"
+    steps.each {|step| p step}
+  end
+
   private
+
+  def knight_moves_recursive(lineage,end_node,queue)
+    @counter += 1
+    start_node = lineage[0]
+    parents = lineage[1].clone << start_node.coordinates
+    return parents << end_node.coordinates if start_node.neighbors.include?(end_node)
+
+    start_node.neighbors.each {|node| queue << [node,parents]}
+    knight_moves_recursive(queue.pop,end_node,queue)
+  end
 
   def initialize_board
     make_board_nodes
@@ -73,4 +94,4 @@ end
 
 x = Knight.new
 
-x.test
+x.knight_moves([3,3],[4,3])
